@@ -3,7 +3,7 @@ import * as minimist from 'minimist';
 import * as path from 'path';
 import * as semver from 'semver';
 
-import {AndroidSDK, Appium, IEDriver, Standalone} from '../binaries';
+import {AndroidSDK, Appium, Standalone} from '../binaries';
 import {Logger, Options, Program} from '../cli';
 import {Config} from '../config';
 import {FileManager} from '../files';
@@ -74,8 +74,6 @@ function status(options: Options) {
       last = updateConfig[Appium.id]['last'];
     } else if (downloaded.binary instanceof AndroidSDK && updateConfig[AndroidSDK.id]) {
       last = updateConfig[AndroidSDK.id]['last'];
-    } else if (downloaded.binary instanceof IEDriver && updateConfig[IEDriver.id]) {
-      last = updateConfig[IEDriver.id]['last'];
     } else if (downloaded.binary instanceof Standalone && updateConfig[Standalone.id]) {
       last = updateConfig[Standalone.id]['last'];
     }

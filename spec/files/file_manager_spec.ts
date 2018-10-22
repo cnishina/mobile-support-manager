@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import {AndroidSDK, Appium, Binary, BinaryMap, IEDriver, Standalone} from '../../lib/binaries';
+import {AndroidSDK, Appium, Binary, BinaryMap, Standalone} from '../../lib/binaries';
 import {Config} from '../../lib/config';
 import {DownloadedBinary, FileManager} from '../../lib/files';
 
@@ -11,7 +11,6 @@ describe('file manager', () => {
     let osType = 'Windows_NT';
 
     it('should find correct binaries', () => {
-      expect(FileManager.checkOS_(osType, IEDriver)).toBe(true);
       expect(FileManager.checkOS_(osType, Standalone)).toBe(true);
       expect(FileManager.checkOS_(osType, AndroidSDK)).toBe(true);
       expect(FileManager.checkOS_(osType, Appium)).toBe(true);
@@ -20,7 +19,6 @@ describe('file manager', () => {
     it('should return the binary array', () => {
       let binaries = FileManager.compileBinaries_(osType);
       expect(binaries[Standalone.id].name).toBe((new Standalone()).name);
-      expect(binaries[IEDriver.id].name).toBe((new IEDriver()).name);
       expect(binaries[AndroidSDK.id].name).toBe((new AndroidSDK()).name);
       expect(binaries[Appium.id].name).toBe((new Appium()).name);
     });
@@ -30,7 +28,6 @@ describe('file manager', () => {
     let osType = 'Linux';
 
     it('should find correct binaries', () => {
-      expect(FileManager.checkOS_(osType, IEDriver)).toBe(false);
       expect(FileManager.checkOS_(osType, Standalone)).toBe(true);
       expect(FileManager.checkOS_(osType, AndroidSDK)).toBe(true);
       expect(FileManager.checkOS_(osType, Appium)).toBe(true);
@@ -41,7 +38,6 @@ describe('file manager', () => {
       expect(binaries[Standalone.id].name).toBe((new Standalone()).name);
       expect(binaries[AndroidSDK.id].name).toBe((new AndroidSDK()).name);
       expect(binaries[Appium.id].name).toBe((new Appium()).name);
-      expect(binaries[IEDriver.id]).toBeUndefined();
     });
   });
 
@@ -49,7 +45,6 @@ describe('file manager', () => {
     let osType = 'Darwin';
 
     it('should find correct binaries', () => {
-      expect(FileManager.checkOS_(osType, IEDriver)).toBe(false);
       expect(FileManager.checkOS_(osType, Standalone)).toBe(true);
       expect(FileManager.checkOS_(osType, AndroidSDK)).toBe(true);
       expect(FileManager.checkOS_(osType, Appium)).toBe(true);
@@ -58,7 +53,6 @@ describe('file manager', () => {
     it('should return the binary array', () => {
       let binaries = FileManager.compileBinaries_(osType);
       expect(binaries[Standalone.id].name).toBe((new Standalone()).name);
-      expect(binaries[IEDriver.id]).toBeUndefined();
       expect(binaries[AndroidSDK.id].name).toBe((new AndroidSDK()).name);
       expect(binaries[Appium.id].name).toBe((new Appium()).name);
     });
@@ -69,7 +63,6 @@ describe('file manager', () => {
     let selenium = new Standalone();
     let android = new AndroidSDK();
     let appium = new Appium();
-    let ie = new IEDriver();
     let ostype: string;
     let arch: string;
 
@@ -85,18 +78,6 @@ describe('file manager', () => {
       existingFiles.push(android.prefix() + '24.1.1' + android.suffix());
       existingFiles.push(android.prefix() + '24.1.1' + android.executableSuffix());
       existingFiles.push(appium.prefix() + '1.6.0' + appium.suffix());
-      if (ostype == 'Windows_NT') {
-        ie.ostype = ostype;
-        ie.osarch = arch;
-        existingFiles.push(ie.prefix() + '_Win32_2.51.0' + ie.suffix());
-        existingFiles.push(ie.prefix() + '_Win32_2.51.0' + ie.executableSuffix());
-        existingFiles.push(ie.prefix() + '_x64_2.51.0' + ie.suffix());
-        existingFiles.push(ie.prefix() + '_x64_2.51.0' + ie.executableSuffix());
-        existingFiles.push(ie.prefix() + '_Win32_2.52.0' + ie.suffix());
-        existingFiles.push(ie.prefix() + '_Win32_2.52.0' + ie.executableSuffix());
-        existingFiles.push(ie.prefix() + '_x64_2.52.0' + ie.suffix());
-        existingFiles.push(ie.prefix() + '_x64_2.52.0' + ie.executableSuffix());
-      }
     }
 
     describe('versions for selenium', () => {
@@ -167,18 +148,6 @@ describe('file manager', () => {
         expect(downloaded.versions[0]).toBe('1.6.0');
       });
     });
-
-    describe('versions for ie on windows', () => {
-      it('should find the correct version for windows', () => {
-        setup('Windows_NT');
-        let downloaded = FileManager.downloadedVersions_(ie, ostype, arch, existingFiles);
-        expect(downloaded.versions.length).toBe(4);
-        expect(downloaded.versions[0]).toBe('Win32_2.51.0');
-        expect(downloaded.versions[1]).toBe('x64_2.51.0');
-        expect(downloaded.versions[2]).toBe('Win32_2.52.0');
-        expect(downloaded.versions[3]).toBe('x64_2.52.0');
-      });
-    });
   });
 
   describe('configuring the CDN location', () => {
@@ -194,9 +163,6 @@ describe('file manager', () => {
         expect(binaries[Appium.id].cdn).toEqual(defaults[Appium.id]);
       });
 
-      it('should use the default configuration for IE Driver', () => {
-        expect(binaries[IEDriver.id].cdn).toEqual(defaults[IEDriver.id]);
-      });
 
       it('should use the default configuration for Selenium Standalone', () => {
         expect(binaries[Standalone.id].cdn).toEqual(defaults['selenium']);

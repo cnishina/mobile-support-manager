@@ -5,7 +5,7 @@ import * as minimist from 'minimist';
 import * as path from 'path';
 import * as q from 'q';
 
-import {AndroidSDK, Appium, Binary, BinaryMap, IEDriver, Standalone} from '../binaries';
+import {AndroidSDK, Appium, Binary, BinaryMap, Standalone} from '../binaries';
 import {Logger, Options, Program, unparseOptions} from '../cli';
 import {Config} from '../config';
 import {FileManager} from '../files';
@@ -39,10 +39,6 @@ let prog = new Program()
 
 if (Config.osType() === 'Darwin') {
   prog.addOption(Opts[Opt.IOS]);
-}
-
-if (Config.osType() === 'Windows_NT') {
-  prog.addOption(Opts[Opt.VERSIONS_IE]).addOption(Opts[Opt.IE64]).addOption(Opts[Opt.EDGE]);
 }
 
 export var program = prog;
@@ -95,9 +91,6 @@ function start(options: Options) {
 
   binaries[Standalone.id].versionCustom = options[Opt.VERSIONS_STANDALONE].getString();
 
-  if (options[Opt.VERSIONS_IE]) {
-    binaries[IEDriver.id].versionCustom = options[Opt.VERSIONS_IE].getString();
-  }
   binaries[AndroidSDK.id].versionCustom = options[Opt.VERSIONS_ANDROID].getString();
   binaries[Appium.id].versionCustom = options[Opt.VERSIONS_APPIUM].getString();
   let downloadedBinaries = FileManager.downloadedBinaries(outputDir);
@@ -110,37 +103,6 @@ function start(options: Options) {
   }
   let promises: Promise<any>[] = [];
   let args: string[] = [];
-  
-  if (downloadedBinaries[IEDriver.id] != null) {
-    let ie: IEDriver = binaries[IEDriver.id];
-    promises.push(ie.getUrl(ie.versionCustom)
-                      .then(() => {
-                        binaries[IEDriver.id].osarch = 'Win32';  // use Win 32 by default
-                        if (options[Opt.IE64].getBoolean()) {
-                          binaries[IEDriver.id].osarch =
-                              Config.osArch();  // use the system architecture
-                        }
-                        args.push(
-                            '-Dwebdriver.ie.driver=' +
-                            path.resolve(outputDir, binaries[IEDriver.id].executableFilename()));
-                      })
-                      .catch(err => {
-                        console.log(err);
-                      }));
-  }
-  if (options[Opt.EDGE] && options[Opt.EDGE].getString()) {
-    // validate that the file exists prior to adding it to args
-    try {
-      let edgeFile = options[Opt.EDGE].getString();
-      if (fs.statSync(edgeFile).isFile()) {
-        promises.push(
-            Promise.resolve(args.push('-Dwebdriver.edge.driver=' + options[Opt.EDGE].getString())));
-      }
-    } catch (err) {
-      // Either the default file or user specified location of the edge
-      // driver does not exist.
-    }
-  }
 
   Promise.all(promises).then(() => {
     let standalone: Standalone = binaries[Standalone.id];

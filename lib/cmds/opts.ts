@@ -1,4 +1,4 @@
-import {AndroidSDK, Appium, IEDriver, Standalone} from '../binaries';
+import {AndroidSDK, Appium, Standalone} from '../binaries';
 import {Cli, Option, Options} from '../cli';
 import {Config} from '../config';
 
@@ -10,14 +10,9 @@ export const IGNORE_SSL = 'ignore_ssl';
 export const PROXY = 'proxy';
 export const ALTERNATE_CDN = 'alternate_cdn';
 export const STANDALONE = 'standalone';
-export const IE = 'ie';
-export const IE32 = 'ie32';
-export const IE64 = 'ie64';
-export const EDGE = 'edge';
 export const ANDROID = 'android';
 export const IOS = 'ios';
 export const VERSIONS_STANDALONE = 'versions.standalone';
-export const VERSIONS_IE = 'versions.ie';
 export const VERSIONS_ANDROID = 'versions.android';
 export const VERSIONS_APPIUM = 'versions.appium';
 export const LOGGING = 'logging';
@@ -51,15 +46,6 @@ opts[PROXY] = new Option(PROXY, 'Proxy to use for the install or update command'
 opts[ALTERNATE_CDN] = new Option(ALTERNATE_CDN, 'Alternate CDN to binaries', 'string');
 opts[STANDALONE] = new Option(
     STANDALONE, 'Install or update selenium standalone', 'boolean', Standalone.isDefault);
-opts[IE] = new Option(IE, 'Install or update 32-bit ie driver', 'boolean', IEDriver.isDefault32);
-opts[IE32] =
-    new Option(IE32, 'Install or update 32-bit ie driver', 'boolean', IEDriver.isDefault32);
-opts[IE64] = new Option(
-    IE64, 'Update: install or update 64-bit IE driver. Start: use installed x64 IE driver.',
-    'boolean', IEDriver.isDefault64);
-opts[EDGE] = new Option(
-    EDGE, 'Use installed Microsoft Edge driver', 'string',
-    'C:\\Program Files (x86)\\Microsoft Web Driver\\MicrosoftWebDriver.exe');
 opts[ANDROID] = new Option(ANDROID, 'Update/use the android sdk', 'boolean', AndroidSDK.isDefault);
 opts[IOS] = new Option(IOS, 'Update the iOS sdk', 'boolean', false);
 opts[VERSIONS_ANDROID] = new Option(
@@ -70,10 +56,6 @@ opts[VERSIONS_STANDALONE] = new Option(
     'string', 'latest');
 opts[VERSIONS_APPIUM] =
     new Option(VERSIONS_APPIUM, 'Optional appium version', 'string', Appium.versionDefault);
-opts[VERSIONS_IE] = new Option(
-    VERSIONS_IE,
-    'Optional internet explorer driver version (use \'latest\' to get the most recent version)',
-    'string', 'latest');
 opts[LOGGING] = new Option(LOGGING, 'File path to logging properties file', 'string', undefined);
 opts[ANDROID_API_LEVELS] = new Option(
     ANDROID_API_LEVELS, 'Which versions of the android API you want to emulate', 'string',

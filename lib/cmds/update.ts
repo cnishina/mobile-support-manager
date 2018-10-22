@@ -6,7 +6,7 @@ import * as path from 'path';
 import * as q from 'q';
 import * as rimraf from 'rimraf';
 
-import {AndroidSDK, Appium, Binary, IEDriver, Standalone} from '../binaries';
+import {AndroidSDK, Appium, Binary, Standalone} from '../binaries';
 import {Logger, Options, Program} from '../cli';
 import {Config} from '../config';
 import {Downloader, FileManager} from '../files';
@@ -39,17 +39,10 @@ if (Config.osType() === 'Darwin') {
   prog.addOption(Opts[Opt.IOS]);
 }
 
-if (Config.osType() === 'Windows_NT') {
-  prog.addOption(Opts[Opt.IE]).addOption(Opts[Opt.IE32]).addOption(Opts[Opt.IE64]);
-}
-
 prog.addOption(Opts[Opt.VERSIONS_STANDALONE])
     .addOption(Opts[Opt.VERSIONS_APPIUM])
     .addOption(Opts[Opt.VERSIONS_ANDROID]);
 
-if (Config.osType() === 'Windows_NT') {
-  prog.addOption(Opts[Opt.VERSIONS_IE]);
-}
 export let program = prog;
 
 // stand alone runner
@@ -69,17 +62,6 @@ let browserFile: BrowserFile;
 function update(options: Options): Promise<void> {
   let promises: any[] = [];
   let standalone = options[Opt.STANDALONE].getBoolean();
-  let ie32: boolean = false;
-  let ie64: boolean = false;
-  if (options[Opt.IE]) {
-    ie32 = ie32 || options[Opt.IE].getBoolean();
-  }
-  if (options[Opt.IE32]) {
-    ie32 = ie32 || options[Opt.IE32].getBoolean();
-  }
-  if (options[Opt.IE64]) {
-    ie64 = options[Opt.IE64].getBoolean();
-  }
   let android: boolean = options[Opt.ANDROID].getBoolean();
   let ios: boolean = false;
   if (options[Opt.IOS]) {
@@ -114,9 +96,6 @@ function update(options: Options): Promise<void> {
   // setup versions for binaries
   let binaries = FileManager.setupBinaries(options[Opt.ALTERNATE_CDN].getString());
   binaries[Standalone.id].versionCustom = options[Opt.VERSIONS_STANDALONE].getString();
-  if (options[Opt.VERSIONS_IE]) {
-    binaries[IEDriver.id].versionCustom = options[Opt.VERSIONS_IE].getString();
-  }
   binaries[AndroidSDK.id].versionCustom = options[Opt.VERSIONS_ANDROID].getString();
   binaries[Appium.id].versionCustom = options[Opt.VERSIONS_APPIUM].getString();
 
@@ -139,20 +118,6 @@ function update(options: Options): Promise<void> {
                       }));
   }
 
-  if (ie64) {
-    let binary: IEDriver = binaries[IEDriver.id];
-    binary.osarch = Config.osArch();  // Win32 or x64
-    promises.push(updateBinary(binary, outputDir, proxy, ignoreSSL).then(() => {
-      return Promise.resolve(updateBrowserFile(binary, outputDir));
-    }));
-  }
-  if (ie32) {
-    let binary: IEDriver = binaries[IEDriver.id];
-    binary.osarch = 'Win32';
-    promises.push(updateBinary(binary, outputDir, proxy, ignoreSSL).then(() => {
-      return Promise.resolve(updateBrowserFile(binary, outputDir));
-    }));
-  }
   if (android) {
     let binary = binaries[AndroidSDK.id];
     let sdk_path = path.resolve(outputDir, binary.executableFilename());
