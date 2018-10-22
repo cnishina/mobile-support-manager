@@ -6,7 +6,7 @@ import * as path from 'path';
 import * as q from 'q';
 import * as rimraf from 'rimraf';
 
-import {AndroidSDK, Appium, Binary, ChromeDriver, GeckoDriver, IEDriver, Standalone} from '../binaries';
+import {AndroidSDK, Appium, Binary, GeckoDriver, IEDriver, Standalone} from '../binaries';
 import {Logger, Options, Program} from '../cli';
 import {Config} from '../config';
 import {Downloader, FileManager} from '../files';
@@ -71,7 +71,7 @@ let browserFile: BrowserFile;
  * @param options
  */
 function update(options: Options): Promise<void> {
-  let promises: q.IPromise<void>[] = [];
+  let promises: any[] = [];
   let standalone = options[Opt.STANDALONE].getBoolean();
   let chrome = options[Opt.CHROME].getBoolean();
   let gecko = options[Opt.GECKO].getBoolean();
@@ -120,7 +120,6 @@ function update(options: Options): Promise<void> {
   // setup versions for binaries
   let binaries = FileManager.setupBinaries(options[Opt.ALTERNATE_CDN].getString());
   binaries[Standalone.id].versionCustom = options[Opt.VERSIONS_STANDALONE].getString();
-  binaries[ChromeDriver.id].versionCustom = options[Opt.VERSIONS_CHROME].getString();
   if (options[Opt.VERSIONS_IE]) {
     binaries[IEDriver.id].versionCustom = options[Opt.VERSIONS_IE].getString();
   }
@@ -148,12 +147,7 @@ function update(options: Options): Promise<void> {
                         updateBrowserFile(binary, outputDir);
                       }));
   }
-  if (chrome) {
-    let binary: ChromeDriver = binaries[ChromeDriver.id];
-    promises.push(updateBinary(binary, outputDir, proxy, ignoreSSL).then(() => {
-      return Promise.resolve(updateBrowserFile(binary, outputDir));
-    }));
-  }
+
   if (gecko) {
     let binary: GeckoDriver = binaries[GeckoDriver.id];
     promises.push(updateBinary(binary, outputDir, proxy, ignoreSSL).then(() => {
@@ -189,7 +183,7 @@ function update(options: Options): Promise<void> {
                             oldAVDList = '[]';
                           })
                       .then(() => {
-                        return updateBinary(binary, outputDir, proxy, ignoreSSL);
+                        return updateBinary(binary, outputDir, proxy, ignoreSSL)
                       })
                       .then<void>(() => {
                         initializeAndroid(

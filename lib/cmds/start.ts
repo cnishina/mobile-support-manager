@@ -5,7 +5,7 @@ import * as minimist from 'minimist';
 import * as path from 'path';
 import * as q from 'q';
 
-import {AndroidSDK, Appium, Binary, BinaryMap, ChromeDriver, GeckoDriver, IEDriver, Standalone} from '../binaries';
+import {AndroidSDK, Appium, Binary, BinaryMap, GeckoDriver, IEDriver, Standalone} from '../binaries';
 import {Logger, Options, Program, unparseOptions} from '../cli';
 import {Config} from '../config';
 import {FileManager} from '../files';
@@ -106,7 +106,7 @@ function start(options: Options) {
     }
   }
   binaries[Standalone.id].versionCustom = options[Opt.VERSIONS_STANDALONE].getString();
-  binaries[ChromeDriver.id].versionCustom = options[Opt.VERSIONS_CHROME].getString();
+
   binaries[GeckoDriver.id].versionCustom = options[Opt.VERSIONS_GECKO].getString();
   if (options[Opt.VERSIONS_IE]) {
     binaries[IEDriver.id].versionCustom = options[Opt.VERSIONS_IE].getString();
@@ -121,41 +121,9 @@ function start(options: Options) {
         'webdriver-manager update --standalone');
     process.exit(1);
   }
-  let promises: q.IPromise<any>[] = [];
+  let promises: Promise<any>[] = [];
   let args: string[] = [];
-  if (osType === 'Linux') {
-    // selenium server may take a long time to start because /dev/random is BLOCKING if there is not
-    // enough entropy the solution is to use /dev/urandom, which is NON-BLOCKING (use /dev/./urandom
-    // because of a java bug)
-    // https://github.com/seleniumhq/selenium-google-code-issue-archive/issues/1301
-    // https://bugs.openjdk.java.net/browse/JDK-6202721
-    promises.push(Promise.resolve(args.push('-Djava.security.egd=file:///dev/./urandom')));
-  }
-  if (options[Opt.LOGGING].getString()) {
-    if (path.isAbsolute(options[Opt.LOGGING].getString())) {
-      loggingFile = options[Opt.LOGGING].getString();
-    } else {
-      loggingFile = path.resolve(Config.getBaseDir(), options[Opt.LOGGING].getString());
-    }
-    promises.push(Promise.resolve(args.push('-Djava.util.logging.config.file=' + loggingFile)));
-  }
-
-  if (downloadedBinaries[ChromeDriver.id] != null) {
-    let chrome: ChromeDriver = binaries[ChromeDriver.id];
-    promises.push(
-        chrome.getUrl(chrome.versionCustom)
-            .then(() => {
-              args.push(
-                  '-Dwebdriver.chrome.driver=' +
-                  path.resolve(outputDir, binaries[ChromeDriver.id].executableFilename()));
-              if (chromeLogs != null) {
-                args.push('-Dwebdriver.chrome.logfile=' + chromeLogs);
-              }
-            })
-            .catch(err => {
-              console.log(err);
-            }));
-  }
+  
   if (downloadedBinaries[GeckoDriver.id] != null) {
     let gecko: GeckoDriver = binaries[GeckoDriver.id];
     promises.push(gecko.getUrl(gecko.versionCustom)

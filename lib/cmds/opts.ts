@@ -1,4 +1,4 @@
-import {AndroidSDK, Appium, ChromeDriver, GeckoDriver, IEDriver, Standalone} from '../binaries';
+import {AndroidSDK, Appium, GeckoDriver, IEDriver, Standalone} from '../binaries';
 import {Cli, Option, Options} from '../cli';
 import {Config} from '../config';
 
@@ -56,8 +56,6 @@ opts[PROXY] = new Option(PROXY, 'Proxy to use for the install or update command'
 opts[ALTERNATE_CDN] = new Option(ALTERNATE_CDN, 'Alternate CDN to binaries', 'string');
 opts[STANDALONE] = new Option(
     STANDALONE, 'Install or update selenium standalone', 'boolean', Standalone.isDefault);
-opts[CHROME] =
-    new Option(CHROME, 'Install or update chromedriver', 'boolean', ChromeDriver.isDefault);
 opts[GECKO] = new Option(GECKO, 'Install or update geckodriver', 'boolean', GeckoDriver.isDefault);
 opts[IE] = new Option(IE, 'Install or update 32-bit ie driver', 'boolean', IEDriver.isDefault32);
 opts[IE32] =
