@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as q from 'q';
 
-import {AndroidSDK, Appium, Binary, BinaryMap, OS, Standalone} from '../binaries';
+import {AndroidSDK, Appium, Binary, BinaryMap, OS} from '../binaries';
 import {Logger} from '../cli';
 import {Config} from '../config';
 
@@ -55,9 +55,6 @@ export class FileManager {
    */
   static compileBinaries_(osType: string, alternateCDN?: string): BinaryMap<Binary> {
     let binaries: BinaryMap<Binary> = {};
-    if (FileManager.checkOS_(osType, Standalone)) {
-      binaries[Standalone.id] = new Standalone(alternateCDN);
-    }
     if (FileManager.checkOS_(osType, AndroidSDK)) {
       binaries[AndroidSDK.id] = new AndroidSDK(alternateCDN);
     }

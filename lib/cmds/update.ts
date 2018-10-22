@@ -6,7 +6,7 @@ import * as path from 'path';
 import * as q from 'q';
 import * as rimraf from 'rimraf';
 
-import {AndroidSDK, Appium, Binary, Standalone} from '../binaries';
+import {AndroidSDK, Appium, Binary} from '../binaries';
 import {Logger, Options, Program} from '../cli';
 import {Config} from '../config';
 import {Downloader, FileManager} from '../files';
@@ -28,7 +28,6 @@ let prog = new Program()
                .addOption(Opts[Opt.IGNORE_SSL])
                .addOption(Opts[Opt.PROXY])
                .addOption(Opts[Opt.ALTERNATE_CDN])
-               .addOption(Opts[Opt.STANDALONE])
                .addOption(Opts[Opt.ANDROID])
                .addOption(Opts[Opt.ANDROID_API_LEVELS])
                .addOption(Opts[Opt.ANDROID_ARCHITECTURES])
@@ -39,8 +38,7 @@ if (Config.osType() === 'Darwin') {
   prog.addOption(Opts[Opt.IOS]);
 }
 
-prog.addOption(Opts[Opt.VERSIONS_STANDALONE])
-    .addOption(Opts[Opt.VERSIONS_APPIUM])
+prog.addOption(Opts[Opt.VERSIONS_APPIUM])
     .addOption(Opts[Opt.VERSIONS_ANDROID]);
 
 export let program = prog;
@@ -61,7 +59,6 @@ let browserFile: BrowserFile;
  */
 function update(options: Options): Promise<void> {
   let promises: any[] = [];
-  let standalone = options[Opt.STANDALONE].getBoolean();
   let android: boolean = options[Opt.ANDROID].getBoolean();
   let ios: boolean = false;
   if (options[Opt.IOS]) {
@@ -95,28 +92,8 @@ function update(options: Options): Promise<void> {
 
   // setup versions for binaries
   let binaries = FileManager.setupBinaries(options[Opt.ALTERNATE_CDN].getString());
-  binaries[Standalone.id].versionCustom = options[Opt.VERSIONS_STANDALONE].getString();
   binaries[AndroidSDK.id].versionCustom = options[Opt.VERSIONS_ANDROID].getString();
   binaries[Appium.id].versionCustom = options[Opt.VERSIONS_APPIUM].getString();
-
-  // if the file has not been completely downloaded, download it
-  // else if the file has already been downloaded, unzip the file, rename it, and give it
-  // permissions
-  if (standalone) {
-    let binary: Standalone = binaries[Standalone.id];
-    promises.push(FileManager.downloadFile(binary, outputDir)
-                      .then<void>((downloaded: boolean) => {
-                        if (!downloaded) {
-                          logger.info(
-                              binary.name + ': file exists ' +
-                              path.resolve(outputDir, binary.filename()));
-                          logger.info(binary.name + ': ' + binary.filename() + ' up to date');
-                        }
-                      })
-                      .then(() => {
-                        updateBrowserFile(binary, outputDir);
-                      }));
-  }
 
   if (android) {
     let binary = binaries[AndroidSDK.id];

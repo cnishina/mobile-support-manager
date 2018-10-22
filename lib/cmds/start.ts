@@ -5,7 +5,7 @@ import * as minimist from 'minimist';
 import * as path from 'path';
 import * as q from 'q';
 
-import {AndroidSDK, Appium, Binary, BinaryMap, Standalone} from '../binaries';
+import {AndroidSDK, Appium, Binary, BinaryMap} from '../binaries';
 import {Logger, Options, Program, unparseOptions} from '../cli';
 import {Config} from '../config';
 import {FileManager} from '../files';
@@ -22,10 +22,8 @@ let prog = new Program()
                .command(commandName, 'start up the selenium server')
                .action(start)
                .addOption(Opts[Opt.OUT_DIR])
-               .addOption(Opts[Opt.SELENIUM_PORT])
                .addOption(Opts[Opt.APPIUM_PORT])
                .addOption(Opts[Opt.AVD_PORT])
-               .addOption(Opts[Opt.VERSIONS_STANDALONE])
                .addOption(Opts[Opt.VERSIONS_ANDROID])
                .addOption(Opts[Opt.VERSIONS_APPIUM])
                .addOption(Opts[Opt.LOGGING])
@@ -67,7 +65,6 @@ function start(options: Options) {
   let osType = Config.osType();
   let stdio = options[Opt.QUIET].getBoolean() ? 'pipe' : 'inherit';
   let binaries = FileManager.setupBinaries();
-  let seleniumPort = options[Opt.SELENIUM_PORT].getString();
   let appiumPort = options[Opt.APPIUM_PORT].getString();
   let avdPort = options[Opt.AVD_PORT].getNumber();
   let android = options[Opt.ANDROID].getBoolean();
@@ -89,85 +86,28 @@ function start(options: Options) {
     return;
   }
 
-  binaries[Standalone.id].versionCustom = options[Opt.VERSIONS_STANDALONE].getString();
-
   binaries[AndroidSDK.id].versionCustom = options[Opt.VERSIONS_ANDROID].getString();
   binaries[Appium.id].versionCustom = options[Opt.VERSIONS_APPIUM].getString();
   let downloadedBinaries = FileManager.downloadedBinaries(outputDir);
 
-  if (downloadedBinaries[Standalone.id] == null) {
-    logger.error(
-        'Selenium Standalone is not present. Install with ' +
-        'webdriver-manager update --standalone');
-    process.exit(1);
-  }
   let promises: Promise<any>[] = [];
   let args: string[] = [];
 
   Promise.all(promises).then(() => {
-    let standalone: Standalone = binaries[Standalone.id];
-    standalone.getUrl(standalone.versionCustom)
-        .then(() => {
-          // starting android
-          if (android) {
-            if (downloadedBinaries[AndroidSDK.id] != null) {
-              let avds = options[Opt.AVDS].getString();
-              startAndroid(
-                  outputDir, binaries[AndroidSDK.id], avds.split(','),
-                  options[Opt.AVD_USE_SNAPSHOTS].getBoolean(), avdPort, stdio);
-            } else {
-              logger.warn('Not starting android because it is not installed');
-            }
-          }
-          if (downloadedBinaries[Appium.id] != null) {
-            startAppium(outputDir, binaries[Appium.id], binaries[AndroidSDK.id], appiumPort, stdio);
-          }
-
-          args.push('-jar');
-          args.push(path.resolve(outputDir, binaries[Standalone.id].filename()));
-        })
-        .catch(err => {
-          console.log(err);
-        })
-        .then(() => {
-          // Add the port parameter, has to declared after the jar file
-          if (seleniumPort) {
-            args.push('-port', seleniumPort);
-          }
-
-          let argsToString = '';
-          for (let arg in args) {
-            argsToString += ' ' + args[arg];
-          }
-          logger.info('java' + argsToString);
-
-          let seleniumProcess = spawn('java', args, stdio);
-          if (options[Opt.STARTED_SIGNIFIER].getString()) {
-            signalWhenReady(
-                options[Opt.STARTED_SIGNIFIER].getString(),
-                options[Opt.SIGNAL_VIA_IPC].getBoolean(), outputDir, seleniumPort,
-                downloadedBinaries[Appium.id] ? appiumPort : '', binaries[AndroidSDK.id], avdPort,
-                androidActiveAVDs);
-          }
-          logger.info('seleniumProcess.pid: ' + seleniumProcess.pid);
-          seleniumProcess.on('exit', (code: number) => {
-            logger.info('Selenium Standalone has exited with code ' + code);
-            shutdownEverything();
-            process.exit(process.exitCode || code);
-          });
-          seleniumProcess.on('error', (error: Error) => {
-            logger.warn('Selenium Standalone server encountered an error: ' + error);
-          });
-          process.stdin.resume();
-          process.stdin.on('data', (chunk: Buffer) => {
-            logger.info('Attempting to shut down selenium nicely');
-            shutdownEverything(seleniumPort);
-          });
-          process.on('SIGINT', () => {
-            logger.info('Staying alive until the Selenium Standalone process exits');
-            shutdownEverything(seleniumPort);
-          });
-        });
+    // starting android
+    if (android) {
+      if (downloadedBinaries[AndroidSDK.id] != null) {
+        let avds = options[Opt.AVDS].getString();
+        startAndroid(
+            outputDir, binaries[AndroidSDK.id], avds.split(','),
+            options[Opt.AVD_USE_SNAPSHOTS].getBoolean(), avdPort, stdio);
+      } else {
+        logger.warn('Not starting android because it is not installed');
+      }
+    }
+    if (downloadedBinaries[Appium.id] != null) {
+      startAppium(outputDir, binaries[Appium.id], binaries[AndroidSDK.id], appiumPort, stdio);
+    }
   });
 }
 

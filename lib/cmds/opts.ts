@@ -1,18 +1,15 @@
-import {AndroidSDK, Appium, Standalone} from '../binaries';
+import {AndroidSDK, Appium} from '../binaries';
 import {Cli, Option, Options} from '../cli';
 import {Config} from '../config';
 
 export const OUT_DIR = 'out_dir';
-export const SELENIUM_PORT = 'seleniumPort';
 export const APPIUM_PORT = 'appium-port';
 export const AVD_PORT = 'avd-port';
 export const IGNORE_SSL = 'ignore_ssl';
 export const PROXY = 'proxy';
 export const ALTERNATE_CDN = 'alternate_cdn';
-export const STANDALONE = 'standalone';
 export const ANDROID = 'android';
 export const IOS = 'ios';
-export const VERSIONS_STANDALONE = 'versions.standalone';
 export const VERSIONS_ANDROID = 'versions.android';
 export const VERSIONS_APPIUM = 'versions.appium';
 export const LOGGING = 'logging';
@@ -34,8 +31,6 @@ export const ALREADY_OFF_ERROR = 'already-off-error';
  */
 var opts: Options = {};
 opts[OUT_DIR] = new Option(OUT_DIR, 'Location to output/expect', 'string', Config.getSeleniumDir());
-opts[SELENIUM_PORT] =
-    new Option(SELENIUM_PORT, 'Optional port for the selenium standalone server', 'string', '4444');
 opts[APPIUM_PORT] =
     new Option(APPIUM_PORT, 'Optional port for the appium server', 'string', '4723');
 opts[AVD_PORT] = new Option(
@@ -44,16 +39,10 @@ opts[AVD_PORT] = new Option(
 opts[IGNORE_SSL] = new Option(IGNORE_SSL, 'Ignore SSL certificates', 'boolean', false);
 opts[PROXY] = new Option(PROXY, 'Proxy to use for the install or update command', 'string');
 opts[ALTERNATE_CDN] = new Option(ALTERNATE_CDN, 'Alternate CDN to binaries', 'string');
-opts[STANDALONE] = new Option(
-    STANDALONE, 'Install or update selenium standalone', 'boolean', Standalone.isDefault);
 opts[ANDROID] = new Option(ANDROID, 'Update/use the android sdk', 'boolean', AndroidSDK.isDefault);
 opts[IOS] = new Option(IOS, 'Update the iOS sdk', 'boolean', false);
 opts[VERSIONS_ANDROID] = new Option(
     VERSIONS_ANDROID, 'Optional android sdk version', 'string', AndroidSDK.versionDefault);
-opts[VERSIONS_STANDALONE] = new Option(
-    VERSIONS_STANDALONE,
-    'Optional seleniuim standalone server version (use \'latest\' to get the most recent version)',
-    'string', 'latest');
 opts[VERSIONS_APPIUM] =
     new Option(VERSIONS_APPIUM, 'Optional appium version', 'string', Appium.versionDefault);
 opts[LOGGING] = new Option(LOGGING, 'File path to logging properties file', 'string', undefined);
