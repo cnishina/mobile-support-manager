@@ -1,6 +1,6 @@
 {
-  "name": "webdriver-manager",
-  "version": "12.1.0",
+  "name": "mobile-support-manager",
+  "version": "0.0.1",
   "description": "A selenium server and browser driver manager for your end to end tests.",
   "scripts": {
     "format": "gulp format",
@@ -30,7 +30,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/angular/webdriver-manager.git"
+    "url": "git://github.com/cnishina/mobile-support-manager.git"
   },
   "bin": {
     "webdriver-manager": "bin/webdriver-manager"
