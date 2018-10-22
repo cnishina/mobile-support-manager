@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import {AndroidSDK, Appium, Binary, BinaryMap, GeckoDriver, IEDriver, Standalone} from '../../lib/binaries';
+import {AndroidSDK, Appium, Binary, BinaryMap, IEDriver, Standalone} from '../../lib/binaries';
 import {Config} from '../../lib/config';
 import {DownloadedBinary, FileManager} from '../../lib/files';
 
@@ -192,10 +192,6 @@ describe('file manager', () => {
 
       it('should use the default configuration for Appium', () => {
         expect(binaries[Appium.id].cdn).toEqual(defaults[Appium.id]);
-      });
-
-      it('should use the default configuration for Gecko Driver', () => {
-        expect(binaries[GeckoDriver.id].cdn).toEqual(defaults[GeckoDriver.id]);
       });
 
       it('should use the default configuration for IE Driver', () => {

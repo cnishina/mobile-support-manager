@@ -5,7 +5,7 @@ import * as minimist from 'minimist';
 import * as path from 'path';
 import * as q from 'q';
 
-import {AndroidSDK, Appium, Binary, BinaryMap, GeckoDriver, IEDriver, Standalone} from '../binaries';
+import {AndroidSDK, Appium, Binary, BinaryMap, IEDriver, Standalone} from '../binaries';
 import {Logger, Options, Program, unparseOptions} from '../cli';
 import {Config} from '../config';
 import {FileManager} from '../files';
@@ -26,11 +26,8 @@ let prog = new Program()
                .addOption(Opts[Opt.APPIUM_PORT])
                .addOption(Opts[Opt.AVD_PORT])
                .addOption(Opts[Opt.VERSIONS_STANDALONE])
-               .addOption(Opts[Opt.VERSIONS_CHROME])
-               .addOption(Opts[Opt.VERSIONS_GECKO])
                .addOption(Opts[Opt.VERSIONS_ANDROID])
                .addOption(Opts[Opt.VERSIONS_APPIUM])
-               .addOption(Opts[Opt.CHROME_LOGS])
                .addOption(Opts[Opt.LOGGING])
                .addOption(Opts[Opt.ANDROID])
                .addOption(Opts[Opt.AVDS])
@@ -96,18 +93,8 @@ function start(options: Options) {
     return;
   }
 
-  let chromeLogs: string = null;
-  let loggingFile: string = null;
-  if (options[Opt.CHROME_LOGS].getString()) {
-    if (path.isAbsolute(options[Opt.CHROME_LOGS].getString())) {
-      chromeLogs = options[Opt.CHROME_LOGS].getString();
-    } else {
-      chromeLogs = path.resolve(Config.getBaseDir(), options[Opt.CHROME_LOGS].getString());
-    }
-  }
   binaries[Standalone.id].versionCustom = options[Opt.VERSIONS_STANDALONE].getString();
 
-  binaries[GeckoDriver.id].versionCustom = options[Opt.VERSIONS_GECKO].getString();
   if (options[Opt.VERSIONS_IE]) {
     binaries[IEDriver.id].versionCustom = options[Opt.VERSIONS_IE].getString();
   }
@@ -124,18 +111,6 @@ function start(options: Options) {
   let promises: Promise<any>[] = [];
   let args: string[] = [];
   
-  if (downloadedBinaries[GeckoDriver.id] != null) {
-    let gecko: GeckoDriver = binaries[GeckoDriver.id];
-    promises.push(gecko.getUrl(gecko.versionCustom)
-                      .then(() => {
-                        args.push(
-                            '-Dwebdriver.gecko.driver=' +
-                            path.resolve(outputDir, binaries[GeckoDriver.id].executableFilename()));
-                      })
-                      .catch(err => {
-                        console.log(err);
-                      }));
-  }
   if (downloadedBinaries[IEDriver.id] != null) {
     let ie: IEDriver = binaries[IEDriver.id];
     promises.push(ie.getUrl(ie.versionCustom)

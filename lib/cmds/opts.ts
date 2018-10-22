@@ -1,4 +1,4 @@
-import {AndroidSDK, Appium, GeckoDriver, IEDriver, Standalone} from '../binaries';
+import {AndroidSDK, Appium, IEDriver, Standalone} from '../binaries';
 import {Cli, Option, Options} from '../cli';
 import {Config} from '../config';
 
@@ -10,21 +10,16 @@ export const IGNORE_SSL = 'ignore_ssl';
 export const PROXY = 'proxy';
 export const ALTERNATE_CDN = 'alternate_cdn';
 export const STANDALONE = 'standalone';
-export const CHROME = 'chrome';
 export const IE = 'ie';
 export const IE32 = 'ie32';
 export const IE64 = 'ie64';
 export const EDGE = 'edge';
-export const GECKO = 'gecko';
 export const ANDROID = 'android';
 export const IOS = 'ios';
-export const VERSIONS_CHROME = 'versions.chrome';
-export const VERSIONS_GECKO = 'versions.gecko';
 export const VERSIONS_STANDALONE = 'versions.standalone';
 export const VERSIONS_IE = 'versions.ie';
 export const VERSIONS_ANDROID = 'versions.android';
 export const VERSIONS_APPIUM = 'versions.appium';
-export const CHROME_LOGS = 'chrome_logs';
 export const LOGGING = 'logging';
 export const ANDROID_API_LEVELS = 'android-api-levels';
 export const ANDROID_ARCHITECTURES = 'android-archs';
@@ -56,7 +51,6 @@ opts[PROXY] = new Option(PROXY, 'Proxy to use for the install or update command'
 opts[ALTERNATE_CDN] = new Option(ALTERNATE_CDN, 'Alternate CDN to binaries', 'string');
 opts[STANDALONE] = new Option(
     STANDALONE, 'Install or update selenium standalone', 'boolean', Standalone.isDefault);
-opts[GECKO] = new Option(GECKO, 'Install or update geckodriver', 'boolean', GeckoDriver.isDefault);
 opts[IE] = new Option(IE, 'Install or update 32-bit ie driver', 'boolean', IEDriver.isDefault32);
 opts[IE32] =
     new Option(IE32, 'Install or update 32-bit ie driver', 'boolean', IEDriver.isDefault32);
@@ -68,12 +62,6 @@ opts[EDGE] = new Option(
     'C:\\Program Files (x86)\\Microsoft Web Driver\\MicrosoftWebDriver.exe');
 opts[ANDROID] = new Option(ANDROID, 'Update/use the android sdk', 'boolean', AndroidSDK.isDefault);
 opts[IOS] = new Option(IOS, 'Update the iOS sdk', 'boolean', false);
-opts[VERSIONS_CHROME] = new Option(
-    VERSIONS_CHROME,
-    'Optional chrome driver version (use \'latest\' to get the most recent version)', 'string',
-    'latest');
-opts[VERSIONS_GECKO] =
-    new Option(VERSIONS_GECKO, 'Optional gecko driver version', 'string', 'latest');
 opts[VERSIONS_ANDROID] = new Option(
     VERSIONS_ANDROID, 'Optional android sdk version', 'string', AndroidSDK.versionDefault);
 opts[VERSIONS_STANDALONE] = new Option(
@@ -86,7 +74,6 @@ opts[VERSIONS_IE] = new Option(
     VERSIONS_IE,
     'Optional internet explorer driver version (use \'latest\' to get the most recent version)',
     'string', 'latest');
-opts[CHROME_LOGS] = new Option(CHROME_LOGS, 'File path to chrome logs', 'string', undefined);
 opts[LOGGING] = new Option(LOGGING, 'File path to logging properties file', 'string', undefined);
 opts[ANDROID_API_LEVELS] = new Option(
     ANDROID_API_LEVELS, 'Which versions of the android API you want to emulate', 'string',

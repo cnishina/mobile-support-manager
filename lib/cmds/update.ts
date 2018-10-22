@@ -6,7 +6,7 @@ import * as path from 'path';
 import * as q from 'q';
 import * as rimraf from 'rimraf';
 
-import {AndroidSDK, Appium, Binary, GeckoDriver, IEDriver, Standalone} from '../binaries';
+import {AndroidSDK, Appium, Binary, IEDriver, Standalone} from '../binaries';
 import {Logger, Options, Program} from '../cli';
 import {Config} from '../config';
 import {Downloader, FileManager} from '../files';
@@ -29,8 +29,6 @@ let prog = new Program()
                .addOption(Opts[Opt.PROXY])
                .addOption(Opts[Opt.ALTERNATE_CDN])
                .addOption(Opts[Opt.STANDALONE])
-               .addOption(Opts[Opt.CHROME])
-               .addOption(Opts[Opt.GECKO])
                .addOption(Opts[Opt.ANDROID])
                .addOption(Opts[Opt.ANDROID_API_LEVELS])
                .addOption(Opts[Opt.ANDROID_ARCHITECTURES])
@@ -46,10 +44,8 @@ if (Config.osType() === 'Windows_NT') {
 }
 
 prog.addOption(Opts[Opt.VERSIONS_STANDALONE])
-    .addOption(Opts[Opt.VERSIONS_CHROME])
     .addOption(Opts[Opt.VERSIONS_APPIUM])
-    .addOption(Opts[Opt.VERSIONS_ANDROID])
-    .addOption(Opts[Opt.VERSIONS_GECKO]);
+    .addOption(Opts[Opt.VERSIONS_ANDROID]);
 
 if (Config.osType() === 'Windows_NT') {
   prog.addOption(Opts[Opt.VERSIONS_IE]);
@@ -73,8 +69,6 @@ let browserFile: BrowserFile;
 function update(options: Options): Promise<void> {
   let promises: any[] = [];
   let standalone = options[Opt.STANDALONE].getBoolean();
-  let chrome = options[Opt.CHROME].getBoolean();
-  let gecko = options[Opt.GECKO].getBoolean();
   let ie32: boolean = false;
   let ie64: boolean = false;
   if (options[Opt.IE]) {
@@ -123,9 +117,6 @@ function update(options: Options): Promise<void> {
   if (options[Opt.VERSIONS_IE]) {
     binaries[IEDriver.id].versionCustom = options[Opt.VERSIONS_IE].getString();
   }
-  if (options[Opt.VERSIONS_GECKO]) {
-    binaries[GeckoDriver.id].versionCustom = options[Opt.VERSIONS_GECKO].getString();
-  }
   binaries[AndroidSDK.id].versionCustom = options[Opt.VERSIONS_ANDROID].getString();
   binaries[Appium.id].versionCustom = options[Opt.VERSIONS_APPIUM].getString();
 
@@ -148,12 +139,6 @@ function update(options: Options): Promise<void> {
                       }));
   }
 
-  if (gecko) {
-    let binary: GeckoDriver = binaries[GeckoDriver.id];
-    promises.push(updateBinary(binary, outputDir, proxy, ignoreSSL).then(() => {
-      return Promise.resolve(updateBrowserFile(binary, outputDir));
-    }));
-  }
   if (ie64) {
     let binary: IEDriver = binaries[IEDriver.id];
     binary.osarch = Config.osArch();  // Win32 or x64
