@@ -1,9 +1,6 @@
 import * as minimist from 'minimist';
-import {Logger, Options, Program} from '../cli';
+import {Logger, Program} from '../cli';
 import {Config} from '../config';
-
-import * as Opt from './';
-import {Opts} from './opts';
 
 let logger = new Logger('version');
 

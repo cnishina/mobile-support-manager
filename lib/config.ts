@@ -1,18 +1,8 @@
-import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 
-import {Logger} from './cli';
-
-
-let logger = new Logger('config');
-
 export interface ConfigFile {
   [key: string]: string;
-  selenium?: string;
-  chrome?: string;
-  gecko?: string;
-  ie?: string;
   android?: string;
   appium?: string;
 }
@@ -88,10 +78,6 @@ export class Config {
   static binaryVersions(): ConfigFile {
     let configFile = require(Config.getConfigFile_());
     let configVersions: ConfigFile = {};
-    configVersions.selenium = configFile.webdriverVersions.selenium;
-    configVersions.chrome = configFile.webdriverVersions.chromedriver;
-    configVersions.gecko = configFile.webdriverVersions.geckodriver;
-    configVersions.ie = configFile.webdriverVersions.iedriver;
     configVersions.android = configFile.webdriverVersions.androidsdk;
     configVersions.appium = configFile.webdriverVersions.appium;
     return configVersions;
@@ -104,10 +90,6 @@ export class Config {
   static cdnUrls(): ConfigFile {
     let configFile = require(Config.getConfigFile_());
     let configCdnUrls: ConfigFile = {};
-    configCdnUrls.selenium = configFile.cdnUrls.selenium;
-    configCdnUrls.chrome = configFile.cdnUrls.chromedriver;
-    configCdnUrls.gecko = configFile.cdnUrls.geckodriver;
-    configCdnUrls.ie = configFile.cdnUrls.iedriver;
     configCdnUrls.android = configFile.cdnUrls.androidsdk;
     return configCdnUrls;
   }

@@ -1,6 +1,4 @@
-import * as minimist from 'minimist';
-
-import {Args, MinimistArgs, Option, Options} from './options';
+import {MinimistArgs, Option, Options} from './options';
 
 
 /**

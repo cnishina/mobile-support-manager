@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as q from 'q';
 
 import {AndroidSDK, Appium, Binary, BinaryMap, OS} from '../binaries';
 import {Logger} from '../cli';

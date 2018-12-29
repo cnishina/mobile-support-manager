@@ -9,7 +9,7 @@ import * as rimraf from 'rimraf';
 import {AndroidSDK, Appium, Binary} from '../binaries';
 import {Logger, Options, Program} from '../cli';
 import {Config} from '../config';
-import {Downloader, FileManager} from '../files';
+import {FileManager} from '../files';
 import {HttpUtils} from '../http_utils';
 import {spawn} from '../utils';
 
@@ -38,8 +38,7 @@ if (Config.osType() === 'Darwin') {
   prog.addOption(Opts[Opt.IOS]);
 }
 
-prog.addOption(Opts[Opt.VERSIONS_APPIUM])
-    .addOption(Opts[Opt.VERSIONS_ANDROID]);
+prog.addOption(Opts[Opt.VERSIONS_APPIUM]).addOption(Opts[Opt.VERSIONS_ANDROID]);
 
 export let program = prog;
 
@@ -109,9 +108,7 @@ function update(options: Options): Promise<void> {
                           () => {
                             oldAVDList = '[]';
                           })
-                      .then(() => {
-                        return updateBinary(binary, outputDir, proxy, ignoreSSL)
-                      })
+                      .then(() => {return updateBinary(binary, outputDir, proxy, ignoreSSL)})
                       .then<void>(() => {
                         initializeAndroid(
                             path.resolve(outputDir, binary.executableFilename()),

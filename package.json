@@ -8,7 +8,7 @@
     "gulp": "gulp",
     "jasmine": "jasmine",
     "prepublish": "npm run format-enforce && tsc && gulp copy",
-    "tsc": "tsc",
+    "tsc": "tsc && cp config.json built/",
     "pretest": "tsc && gulp copy",
     "test": "npm run test-unit && npm run test-e2e",
     "test-unit": "jasmine",
@@ -33,7 +33,8 @@
     "url": "git://github.com/cnishina/mobile-support-manager.git"
   },
   "bin": {
-    "webdriver-manager": "bin/webdriver-manager"
+    "mobile-support-manager": "bin/mobile-support-manager",
+    "mob": "bin/mob"
   },
   "main": "built/lib/webdriver.js",
   "author": "Craig Nishina <craig.nishina@gmail.com>",

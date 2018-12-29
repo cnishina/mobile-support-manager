@@ -1,4 +1,3 @@
-import * as path from 'path';
 import * as rimraf from 'rimraf';
 
 import {Config} from '../config';

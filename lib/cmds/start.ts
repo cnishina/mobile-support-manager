@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as http from 'http';
 import * as minimist from 'minimist';
 import * as path from 'path';
-import * as q from 'q';
 
 import {AndroidSDK, Appium, Binary, BinaryMap} from '../binaries';
 import {Logger, Options, Program, unparseOptions} from '../cli';

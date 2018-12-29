@@ -1,12 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as q from 'q';
 import * as request from 'request';
 import * as url from 'url';
 
 import {Binary} from '../binaries';
 import {Logger} from '../cli';
-import {Config} from '../config';
 import {HttpUtils} from '../http_utils';
 
 let logger = new Logger('downloader');
@@ -30,7 +28,7 @@ export class Downloader {
    */
   static getFile(
       binary: Binary, fileUrl: string, fileName: string, outputDir: string, contentLength: number,
-      callback?: Function): Promise<boolean> {
+      callback?: Function): Promise<any> {
     let filePath = path.resolve(outputDir, fileName);
     let file: any;
 

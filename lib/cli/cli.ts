@@ -1,8 +1,3 @@
-import * as chalk from 'chalk';
-import * as path from 'path';
-
-import {Config} from '../config';
-
 import {MinimistArgs, Options} from './options';
 import {Program, Programs} from './programs';
 

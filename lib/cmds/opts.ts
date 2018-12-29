@@ -1,5 +1,5 @@
 import {AndroidSDK, Appium} from '../binaries';
-import {Cli, Option, Options} from '../cli';
+import {Option, Options} from '../cli';
 import {Config} from '../config';
 
 export const OUT_DIR = 'out_dir';
